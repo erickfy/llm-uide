@@ -16,8 +16,8 @@ services:
     ports:
       - "8000:8000"
     environment:
-      OLLAMA_BASE_URL: http://127.0.0.1:11434
-      OLLAMA_MODEL: llama3.2:1b
+      OLLAMA_BASE_URL: http://ollama:11434
+      OLLAMA_MODEL: tinyllama
     depends_on:
       - ollama
     restart: unless-stopped

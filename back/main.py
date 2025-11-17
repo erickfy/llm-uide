@@ -13,11 +13,15 @@ from autonomo1.binary_search_with_steps import binary_search_with_steps
 
 app = FastAPI(title="UIDE Jarvis Backend")
 
-# CORS para que el front (React, Next, etc.) pueda llamar a la API
+origins = [
+    "http://localhost:5173",
+    "http://uide-jarvis-front.s3-website-us-east-1.amazonaws.com",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # luego lo podemos restringir a tu dominio
-    allow_credentials=True,
+    allow_origins=origins,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
