@@ -2,7 +2,7 @@ name: Deploy Frontend to S3
 
 on:
   push:
-    branches: [master]
+    branches: [main, master]
     paths:
       - "front/**"
       - ".github/workflows/deploy-front-s3.yml"
@@ -26,7 +26,7 @@ jobs:
 
       - name: Run tests
         working-directory: front
-        run: npm test -- --runInBand
+        run: npm test
 
       - name: Build frontend
         working-directory: front
