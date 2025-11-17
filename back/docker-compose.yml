@@ -16,9 +16,8 @@ services:
     ports:
       - "8000:8000"
     environment:
-      # Dentro de Docker, el backend verá a Ollama por el nombre del servicio
-      OLLAMA_BASE_URL: http://ollama:11434
-      OLLAMA_MODEL: llama3.2
+      OLLAMA_BASE_URL: http://127.0.0.1:11434
+      OLLAMA_MODEL: llama3.2:1b
     depends_on:
       - ollama
     restart: unless-stopped
