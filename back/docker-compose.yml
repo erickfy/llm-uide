@@ -10,13 +10,13 @@ services:
       - ollama_data:/root/.ollama
     restart: unless-stopped
     mem_limit: 1g # Limitar el contenedor a 4 GB de memoria
-    mem_reservation: 700m # Reservar al menos 700 MB de memoria para el contenedor
+    mem_reservation: 710m # Reservar al menos 700 MB de memoria para el contenedor
     deploy:
       resources:
         limits:
           memory: 1g
         reservations:
-          memory: 700m
+          memory: 710m
 
   backend:
     build: .
