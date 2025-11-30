@@ -24,7 +24,7 @@ vi.mock("@aws-sdk/lib-storage", () => {
 });
 
 // 🧪 Mock del cliente S3 y bucket de entrada
-vi.mock("../aws/s3Client", () => ({
+vi.mock("../../aws/s3Client", () => ({
   s3Client: {}, // truthy para pasar la validación
   S3_INPUT_BUCKET: "fake-bucket",
 }));
