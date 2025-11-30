@@ -23,11 +23,19 @@ a:hover {
 }
 
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  background: linear-gradient(
+    135deg,
+    #020617 0%,
+    /* casi negro */ #0f172a 30%,
+    /* azul oscuro */ #1e293b 65%,
+    /* slate */ #0b1120 100% /* violeta muy oscuro */
+  );
+  color: #e5e7eb;
+
+  /* importante: nada de flex aquí, dejamos que App maneje el layout */
+  display: block;
 }
 
 h1 {

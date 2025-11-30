@@ -1,35 +1,33 @@
-type TabId = 'llm' | 'binary'
+export type TabId = "llm" | "binary" | "video";
 
 interface HeaderTabsProps {
-  activeTab: TabId
-  onChange: (tab: TabId) => void
+  activeTab: TabId;
+  onChange: (tab: TabId) => void;
 }
 
 export function HeaderTabs({ activeTab, onChange }: HeaderTabsProps) {
   return (
-    <header className="app-header">
-      <div className="app-header-left">
-        <span className="app-logo-dot" />
-        <span className="app-title">UIDE Jarvis</span>
-        <span className="app-env-badge">local</span>
-      </div>
+    <header className="header-tabs">
+      <button
+        className={activeTab === "video" ? "tab active" : "tab"}
+        onClick={() => onChange("video")}
+      >
+        Video S3 / CloudFront
+      </button>
 
-      <nav className="app-tabs">
-        <button
-          className={`app-tab ${activeTab === 'llm' ? 'app-tab--active' : ''}`}
-          onClick={() => onChange('llm')}
-        >
-          LLM
-        </button>
-        <button
-          className={`app-tab ${
-            activeTab === 'binary' ? 'app-tab--active' : ''
-          }`}
-          onClick={() => onChange('binary')}
-        >
-          Binary Search
-        </button>
-      </nav>
+      <button
+        className={activeTab === "llm" ? "tab active" : "tab"}
+        onClick={() => onChange("llm")}
+      >
+        LLM
+      </button>
+
+      <button
+        className={activeTab === "binary" ? "tab active" : "tab"}
+        onClick={() => onChange("binary")}
+      >
+        Binary Search
+      </button>
     </header>
-  )
+  );
 }

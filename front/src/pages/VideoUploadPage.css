@@ -1,0 +1,154 @@
+.video-upload-page {
+  min-height: calc(100vh - 60px); /* respeta el header de App */
+  background: radial-gradient(circle at top, #0f172a 0, #020617 40%, #000 100%);
+  display: flex;
+  justify-content: center;
+  padding: 2rem 1.5rem 3rem;
+  box-sizing: border-box;
+}
+
+.video-upload-inner {
+  width: 100%;
+  max-width: 900px; /* ancho máximo de la zona de contenido */
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+}
+
+.vu-card {
+  background: #020617;
+  border-radius: 16px;
+  padding: 1.75rem 2rem;
+  width: 100%;
+  max-width: 520px; /* ancho máximo del formulario */
+  border: 1px solid #1f2937;
+  box-shadow: 0 22px 45px -18px rgba(0, 0, 0, 0.9);
+  color: #e5e7eb;
+}
+
+@media (max-width: 640px) {
+  .vu-card {
+    padding: 1.25rem 1.25rem;
+    max-width: 100%;
+  }
+}
+
+.vu-card h1 {
+  margin-top: 0;
+  margin-bottom: 0.6rem;
+  font-size: 1.35rem;
+  color: #f9fafb;
+}
+
+.vu-description {
+  font-size: 0.9rem;
+  color: #9ca3af;
+  margin-bottom: 1.1rem;
+}
+
+.vu-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  background: #111827;
+  border: 1px solid #1f2937;
+  font-size: 0.78rem;
+  margin-bottom: 1.25rem;
+}
+
+.vu-pill-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #22c55e;
+}
+
+.vu-label {
+  display: block;
+  font-size: 0.85rem;
+  margin-top: 0.6rem;
+  margin-bottom: 0.25rem;
+}
+
+.vu-input {
+  width: 100%;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  border: 1px solid #4b5563;
+  background: #020617;
+  color: #e5e7eb;
+  margin-bottom: 0.5rem;
+  box-sizing: border-box;
+}
+
+.vu-input[type="file"] {
+  padding: 0.3rem;
+}
+
+.vu-input:focus {
+  outline: none;
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 1px #38bdf8;
+}
+
+.vu-button {
+  margin-top: 0.9rem;
+  width: 100%;
+  padding: 0.55rem 0.9rem;
+  border-radius: 999px;
+  border: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #f9fafb;
+}
+
+.vu-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.vu-progress-wrap {
+  margin-top: 0.9rem;
+  background: #111827;
+  border-radius: 999px;
+  overflow: hidden;
+  height: 8px;
+  border: 1px solid #1f2937;
+}
+
+.vu-progress-bar {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #38bdf8, #22c55e);
+  transition: width 0.15s linear;
+}
+
+.vu-status {
+  margin-top: 0.6rem;
+  font-size: 0.85rem;
+  min-height: 1.25rem;
+}
+
+.vu-status-info {
+  color: #e5e7eb;
+}
+
+.vu-status-error {
+  color: #f97373;
+}
+
+.vu-status-success {
+  color: #4ade80;
+}
+
+.vu-note {
+  margin-top: 1.1rem;
+  font-size: 0.78rem;
+  color: #9ca3af;
+  line-height: 1.4;
+}
