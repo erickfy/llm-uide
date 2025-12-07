@@ -6,6 +6,91 @@ import "./VideoGalleryPage.css";
 
 type Status = "idle" | "loading" | "error" | "ready";
 
+function FooterPlayer({
+  activeVideo,
+  playbackUrl,
+  title,
+}: {
+  activeVideo: VideoItem | null;
+  playbackUrl: string | null;
+  title: string;
+}) {
+  const rawVideoUrl = playbackUrl ?? activeVideo?.url ?? "";
+  const hasVideoUrl = !!rawVideoUrl;
+  const isHttpsPlayback = rawVideoUrl.startsWith("https://");
+
+  // Solo exponemos videoUrl si existe
+  const videoUrl = hasVideoUrl ? rawVideoUrl : undefined;
+
+  // Solo construimos la URL de la demo HLS si la URL de playback es https
+  const hlsUrl = isHttpsPlayback
+    ? `https://hlsjs.video-dev.org/demo/?src=${encodeURIComponent(
+        rawVideoUrl.replace("_low", "").replace("_high", "")
+      )}&demoConfig=eyJlbmFibGVTdHJlYW1pbmciOnRydWUsImF1dG9SZWNvdmVyRXJyb3IiOnRydWUsInN0b3BPblN0YWxsIjpmYWxzZSwiZHVtcGZNUDQiOmZhbHNlLCJsZXZlbENhcHBpbmciOi0xLCJsaW1pdE1ldHJpY3MiOi0xfQ==`
+    : undefined;
+
+  return (
+    <div className="vg-info-grid">
+      <div>
+        <div className="vg-info-label">Objeto en S3 (salida)</div>
+        <div className="vg-info-value">{activeVideo?.key}</div>
+      </div>
+      <div>
+        <div>
+          <div className="vg-info-label">URL de playback</div>
+          <div className="vg-info-value vg-info-url">
+            {activeVideo && (
+              <a
+                href={videoUrl}
+                className="vg-playback-link"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {videoUrl}
+                <span className="vg-link-icon" aria-hidden="true">
+                  ↗
+                </span>
+              </a>
+            )}
+          </div>
+        </div>
+        <div>
+          <div className="vg-info-label">URL de HLS (demo hls.js)</div>
+          <div className="vg-info-value vg-info-url">
+            {activeVideo && (
+              <>
+                {hlsUrl ? (
+                  // ✅ Habilitado cuando la URL es https
+                  <a
+                    href={hlsUrl}
+                    className="vg-playback-link"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {title}
+                    <span className="vg-link-icon" aria-hidden="true">
+                      ↗
+                    </span>
+                  </a>
+                ) : (
+                  // ❌ "Deshabilitado" cuando no hay https
+                  <span
+                    className="vg-playback-link vg-playback-link--disabled"
+                    aria-disabled="true"
+                    title="La URL de playback debe empezar con https:// para probarla en la demo de hls.js"
+                  >
+                    No disponible (requiere HTTPS)
+                  </span>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function VideoGalleryPage() {
   const [videos, setVideos] = useState<VideoItem[]>([]);
   const [activeVideo, setActiveVideo] = useState<VideoItem | null>(null);
@@ -77,30 +162,11 @@ export function VideoGalleryPage() {
               mediante <strong>Amazon CloudFront (S3)</strong>.
             </p>
             {activeVideo && (
-              <div className="vg-info-grid">
-                <div>
-                  <div className="vg-info-label">Objeto en S3 (salida)</div>
-                  <div className="vg-info-value">{activeVideo.key}</div>
-                </div>
-                <div>
-                  <div className="vg-info-label">URL de playback</div>
-                  <div className="vg-info-value vg-info-url">
-                    {activeVideo && (
-                      <a
-                        href={playbackUrl ?? activeVideo.url}
-                        className="vg-playback-link"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {playbackUrl ?? activeVideo.url}
-                        <span className="vg-link-icon" aria-hidden="true">
-                          ↗
-                        </span>
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </div>
+              <FooterPlayer
+                activeVideo={activeVideo}
+                playbackUrl={playbackUrl}
+                title={activeVideo?.title ?? ""}
+              />
             )}
           </div>
         </section>
