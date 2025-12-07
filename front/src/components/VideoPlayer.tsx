@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Hls from "hls.js";
+import { CLOUDFRONT_URL } from "../aws/s3Client";
 
 interface VideoPlayerProps {
   src: string | null;
@@ -23,6 +24,8 @@ export function VideoPlayer({ src, title, onSourceChange }: VideoPlayerProps) {
   const [selectedQuality, setSelectedQuality] = useState<QualityValue>("auto");
   const [qualityEnabled, setQualityEnabled] = useState(false);
   const [currentLabel, setCurrentLabel] = useState<string>("Auto");
+
+  console.log("url: ", src);
 
   useEffect(() => {
     // 🔥 limpiar cualquier instancia previa
@@ -50,7 +53,50 @@ export function VideoPlayer({ src, title, onSourceChange }: VideoPlayerProps) {
     }
 
     if (Hls.isSupported()) {
-      const hls = new Hls();
+      const S3_WEBSITE_ORIGIN =
+        "http://uide-jarvis-front.s3-website-us-east-1.amazonaws.com";
+      const CLOUDFRONT_ORIGIN = CLOUDFRONT_URL;
+
+      const hls = new Hls({
+        xhrSetup: (xhr, url) => {
+          // Guardamos el open original
+          const origOpen = xhr.open.bind(xhr);
+
+          // Sobrescribimos open para poder reescribir la URL
+          xhr.open = function (
+            method: string,
+            requestUrl: string,
+            async?: boolean,
+            ...rest: any[]
+          ) {
+            let newUrl = requestUrl;
+
+            // Si la URL apunta al website HTTP del bucket, la cambiamos a CloudFront HTTPS
+            if (
+              typeof requestUrl === "string" &&
+              requestUrl.startsWith(S3_WEBSITE_ORIGIN)
+            ) {
+              newUrl =
+                CLOUDFRONT_ORIGIN + requestUrl.slice(S3_WEBSITE_ORIGIN.length);
+
+              console.log(
+                "[HLS] Reescribiendo URL de origin a CloudFront:",
+                requestUrl,
+                "→",
+                newUrl
+              );
+            }
+
+            // Por seguridad, si todavía viniera http://, lo forzamos a https://
+            if (newUrl.toLowerCase().startsWith("http://")) {
+              newUrl = "https://" + newUrl.slice("http://".length);
+            }
+
+            return origOpen(method, newUrl, async ?? true, ...rest);
+          };
+        },
+      });
+
       hlsRef.current = hls;
 
       hls.loadSource(src);

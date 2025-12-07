@@ -72,7 +72,7 @@ function normalizeCloudfrontUrl(raw?: string): string | undefined {
   return u;
 }
 
-const CLOUDFRONT_URL = normalizeCloudfrontUrl(RAW_CLOUDFRONT_URL);
+export const CLOUDFRONT_URL = normalizeCloudfrontUrl(RAW_CLOUDFRONT_URL);
 
 if (!CLOUDFRONT_URL) {
   console.error(
@@ -108,6 +108,7 @@ export const s3Client =
           accessKeyId: AWS_ACCESS_KEY_ID,
           secretAccessKey: AWS_SECRET_ACCESS_KEY,
         },
+        
       })
     : null;
 
