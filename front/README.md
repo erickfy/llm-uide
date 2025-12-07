@@ -1,7 +1,9 @@
-# Frontend UIDE – Jarvis + Binary Search
+# Frontend UIDE – (VIDEO PLAYER + ~~Jarvis~~ + ~~Binary Search~~)
 
 Este proyecto es el **frontend** del sistema UIDE-Jarvis.  
 Está construido con **React + TypeScript + Vite** y consume el backend hecho en **FastAPI**.
+
+[URL de Aplicación :racehorse:](https://dizdb3bht17kt.cloudfront.net)
 
 ## ¿Qué hay en este frontend?
 
