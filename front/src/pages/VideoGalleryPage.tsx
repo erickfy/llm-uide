@@ -1,10 +1,36 @@
 import { useEffect, useState } from "react";
-import { listHlsVideos, type VideoItem } from "../aws/s3Client";
+import {
+  listHlsVideos,
+  RAW_CLOUDFRONT_URL,
+  type VideoItem,
+} from "../aws/s3Client";
 import { VideoPlayer } from "../components/VideoPlayer";
 import { VideoList } from "../components/VideoList";
 import "./VideoGalleryPage.css";
 
 type Status = "idle" | "loading" | "error" | "ready";
+
+const S3_WEBSITE_HOST = "uide-jarvis-front.s3-website-us-east-1.amazonaws.com";
+const CLOUDFRONT_HOST = RAW_CLOUDFRONT_URL;
+
+function normalizePlaybackUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  let u = url.trim();
+  if (!u) return null;
+
+  // Si viene con el host del website (http o https), lo cambiamos a CloudFront
+  u = u.replace(
+    new RegExp(`^https?://${S3_WEBSITE_HOST}`),
+    `https://${CLOUDFRONT_HOST}`
+  );
+
+  // Por seguridad, cualquier http:// lo forzamos a https://
+  if (u.toLowerCase().startsWith("http://")) {
+    u = "https://" + u.slice("http://".length);
+  }
+
+  return u;
+}
 
 function FooterPlayer({
   activeVideo,
@@ -15,7 +41,8 @@ function FooterPlayer({
   playbackUrl: string | null;
   title: string;
 }) {
-  const rawVideoUrl = playbackUrl ?? activeVideo?.url ?? "";
+  const rawVideoUrl =
+    normalizePlaybackUrl(playbackUrl ?? activeVideo?.url) ?? "";
   const hasVideoUrl = !!rawVideoUrl;
   const isHttpsPlayback = rawVideoUrl.startsWith("https://");
 
@@ -111,7 +138,7 @@ export function VideoGalleryPage() {
         setStatus("ready");
 
         if (first?.url) {
-          setPlaybackUrl(first.url);
+          setPlaybackUrl(normalizePlaybackUrl(first.url));
         }
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : "Error desconocido";
@@ -125,7 +152,7 @@ export function VideoGalleryPage() {
 
   function handleSelectVideo(video: VideoItem) {
     setActiveVideo(video);
-    setPlaybackUrl(video.url);
+    setPlaybackUrl(normalizePlaybackUrl(video.url));
   }
 
   const headerTitle = (activeVideo?.title ?? "CloudFront HLS Studio").split(
@@ -149,7 +176,7 @@ export function VideoGalleryPage() {
       <main className="vg-main">
         <section className="vg-main-left">
           <VideoPlayer
-            src={activeVideo?.url ?? null}
+            src={normalizePlaybackUrl(activeVideo?.url ?? null)}
             title={activeVideo?.title ?? ""}
             onSourceChange={(newSrc) => setPlaybackUrl(newSrc)}
           />

@@ -51,17 +51,19 @@ export function VideoPlayer({ src, title, onSourceChange }: VideoPlayerProps) {
     }
 
     if (Hls.isSupported()) {
-      const S3_WEBSITE_ORIGIN =
-        "http://uide-jarvis-front.s3-website-us-east-1.amazonaws.com";
-      const CLOUDFRONT_ORIGIN = CLOUDFRONT_URL;
+      const S3_WEBSITE_HOST =
+        "uide-jarvis-front.s3-website-us-east-1.amazonaws.com";
+
+      // Usamos el CLOUDFRONT_URL normalizado si existe, si no, el origin de la página
+      const pageOrigin =
+        typeof window !== "undefined" ? window.location.origin : "";
+      const baseOrigin = CLOUDFRONT_URL || pageOrigin;
 
       const hls = new Hls({
         xhrSetup: (xhr, _) => {
-          // Guardamos el open original
-          const origOpen = xhr.open.bind(xhr);
+          const originalOpen = xhr.open.bind(xhr);
 
-          // Sobrescribimos open para poder reescribir la URL
-          xhr.open = function (
+          (xhr as any).open = function (
             method: string,
             requestUrl: string,
             async?: boolean,
@@ -69,28 +71,45 @@ export function VideoPlayer({ src, title, onSourceChange }: VideoPlayerProps) {
           ) {
             let newUrl = requestUrl;
 
-            // Si la URL apunta al website HTTP del bucket, la cambiamos a CloudFront HTTPS
-            if (
-              typeof requestUrl === "string" &&
-              requestUrl.startsWith(S3_WEBSITE_ORIGIN)
-            ) {
-              newUrl =
-                CLOUDFRONT_ORIGIN + requestUrl.slice(S3_WEBSITE_ORIGIN.length);
+            try {
+              const u = new URL(requestUrl, baseOrigin);
 
-              console.log(
-                "[HLS] Reescribiendo URL de origin a CloudFront:",
-                requestUrl,
-                "→",
-                newUrl
-              );
+              // Si el host es el del website de S3, lo cambiamos al host de CloudFront/página
+              if (u.hostname === S3_WEBSITE_HOST) {
+                const cfOrigin = new URL(baseOrigin);
+                u.protocol = "https:";
+                u.host = cfOrigin.host;
+
+                newUrl = u.toString();
+
+                console.log(
+                  "[HLS] Reescribiendo URL de origin a CloudFront:",
+                  requestUrl,
+                  "→",
+                  newUrl
+                );
+              } else if (u.protocol === "http:") {
+                // Fallback: cualquier http:// → https://
+                u.protocol = "https:";
+                newUrl = u.toString();
+
+                console.log("[HLS] Forzando https:", requestUrl, "→", newUrl);
+              }
+            } catch {
+              // Si el URL() falla, intentamos al menos cambiar http→https
+              if (newUrl.toLowerCase().startsWith("http://")) {
+                const forced = "https://" + newUrl.slice("http://".length);
+                console.log(
+                  "[HLS] Forzando https (fallback):",
+                  newUrl,
+                  "→",
+                  forced
+                );
+                newUrl = forced;
+              }
             }
 
-            // Por seguridad, si todavía viniera http://, lo forzamos a https://
-            if (newUrl.toLowerCase().startsWith("http://")) {
-              newUrl = "https://" + newUrl.slice("http://".length);
-            }
-
-            return origOpen(method, newUrl, async ?? true, ...rest);
+            return originalOpen(method, newUrl, async ?? true, ...rest);
           };
         },
       });

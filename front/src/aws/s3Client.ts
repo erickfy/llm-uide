@@ -20,7 +20,7 @@ const S3_HLS_PREFIX =
   (import.meta.env.VITE_S3_HLS_PREFIX as string | undefined) || "";
 
 // Dominio público que verá el navegador (CloudFront)
-const RAW_CLOUDFRONT_URL = import.meta.env
+export const RAW_CLOUDFRONT_URL = import.meta.env
   .VITE_CLOUDFRONT_URL as string | undefined;
 
 //
