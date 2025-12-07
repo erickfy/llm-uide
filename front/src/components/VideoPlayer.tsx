@@ -25,8 +25,6 @@ export function VideoPlayer({ src, title, onSourceChange }: VideoPlayerProps) {
   const [qualityEnabled, setQualityEnabled] = useState(false);
   const [currentLabel, setCurrentLabel] = useState<string>("Auto");
 
-  console.log("url: ", src);
-
   useEffect(() => {
     // 🔥 limpiar cualquier instancia previa
     if (hlsRef.current) {
@@ -58,7 +56,7 @@ export function VideoPlayer({ src, title, onSourceChange }: VideoPlayerProps) {
       const CLOUDFRONT_ORIGIN = CLOUDFRONT_URL;
 
       const hls = new Hls({
-        xhrSetup: (xhr, url) => {
+        xhrSetup: (xhr, _) => {
           // Guardamos el open original
           const origOpen = xhr.open.bind(xhr);
 
